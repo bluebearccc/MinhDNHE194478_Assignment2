@@ -712,7 +712,8 @@ select.form-control {
   }
 }
 
-/* Modal & Dialog Styles */
+/* Modal & Dialog Styles - Commented out to avoid conflict with React Bootstrap */
+/*
 .modal {
   position: fixed;
   top: 0;
@@ -788,6 +789,7 @@ select.form-control {
     border-top: 1px solid var(--border);
   }
 }
+*/
 
 /* Utility Classes */
 .text-center {
@@ -980,7 +982,8 @@ select.form-control {
   }
 }
 
-/* Custom Scrollbar for Modal */
+/* Custom Scrollbar for Modal - Commented out to avoid conflict with React Bootstrap */
+/*
 .modal-content::-webkit-scrollbar {
   width: 8px;
 }
@@ -998,6 +1001,7 @@ select.form-control {
     background: var(--text-light);
   }
 }
+*/
 
 /* Print Styles */
 @media print {

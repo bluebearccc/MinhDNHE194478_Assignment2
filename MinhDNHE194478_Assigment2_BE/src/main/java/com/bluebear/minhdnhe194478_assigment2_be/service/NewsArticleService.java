@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -117,7 +118,24 @@ public class NewsArticleService {
         SystemAccount createdBy = accountRepository.findById(createdByAccountId)
                 .orElseThrow(() -> new ResourceNotFoundException("Account", createdByAccountId));
 
-        List<Tag> tags = tagRepository.findAllById(request.getTagIds());
+        // Handle tags - create or find by name
+        List<Tag> tags = new ArrayList<>();
+        if (request.getTagNames() != null && !request.getTagNames().isEmpty()) {
+            for (String tagName : request.getTagNames()) {
+                if (tagName != null && !tagName.trim().isEmpty()) {
+                    String trimmedName = tagName.trim();
+                    Tag tag = tagRepository.findByTagNameIgnoreCase(trimmedName)
+                            .orElseGet(() -> {
+                                Tag newTag = Tag.builder()
+                                        .tagName(trimmedName)
+                                        .note("Created automatically with news article")
+                                        .build();
+                                return tagRepository.save(newTag);
+                            });
+                    tags.add(tag);
+                }
+            }
+        }
 
         NewsArticle article = NewsArticle.builder()
                 .newsTitle(request.getNewsTitle())
@@ -144,7 +162,26 @@ public class NewsArticleService {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category", request.getCategoryId()));
 
-        List<Tag> tags = tagRepository.findAllById(request.getTagIds());
+        // Handle tags - create or find by name (use tagNames if provided, otherwise use tagIds)
+        List<Tag> tags = new ArrayList<>();
+        if (request.getTagNames() != null && !request.getTagNames().isEmpty()) {
+            for (String tagName : request.getTagNames()) {
+                if (tagName != null && !tagName.trim().isEmpty()) {
+                    String trimmedName = tagName.trim();
+                    Tag tag = tagRepository.findByTagNameIgnoreCase(trimmedName)
+                            .orElseGet(() -> {
+                                Tag newTag = Tag.builder()
+                                        .tagName(trimmedName)
+                                        .note("Created automatically with news article")
+                                        .build();
+                                return tagRepository.save(newTag);
+                            });
+                    tags.add(tag);
+                }
+            }
+        } else if (request.getTagIds() != null && !request.getTagIds().isEmpty()) {
+            tags = tagRepository.findAllById(request.getTagIds());
+        }
 
         article.setNewsTitle(request.getNewsTitle());
         article.setHeadline(request.getHeadline());

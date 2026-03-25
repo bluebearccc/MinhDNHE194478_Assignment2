@@ -28,4 +28,6 @@ public class NewsArticleRequest {
     private Boolean newsStatus = true;
 
     private List<Integer> tagIds = new ArrayList<>();
+    
+    private List<String> tagNames = new ArrayList<>();
 }

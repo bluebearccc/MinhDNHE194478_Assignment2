@@ -2,6 +2,7 @@ package com.bluebear.minhdnhe194478_assigment2_be.service;
 
 import com.bluebear.minhdnhe194478_assigment2_be.dto.LoginRequest;
 import com.bluebear.minhdnhe194478_assigment2_be.dto.LoginResponse;
+import com.bluebear.minhdnhe194478_assigment2_be.dto.RegisterRequest;
 import com.bluebear.minhdnhe194478_assigment2_be.entity.SystemAccount;
 import com.bluebear.minhdnhe194478_assigment2_be.exception.BusinessException;
 import com.bluebear.minhdnhe194478_assigment2_be.repository.SystemAccountRepository;
@@ -46,6 +47,41 @@ public class AuthService {
                 .accountName(account.getAccountName() != null ? account.getAccountName().trim() : null)
                 .accountEmail(account.getAccountEmail().trim())
                 .accountRole(account.getAccountRole())
+                .build();
+    }
+
+    public LoginResponse register(RegisterRequest request) {
+        // Check if email already exists
+        if (accountRepository.existsByAccountEmail(request.getAccountEmail())) {
+            throw new BusinessException("Email already in use: " + request.getAccountEmail());
+        }
+
+        // Create new account with default role as Staff (2)
+        SystemAccount newAccount = SystemAccount.builder()
+                .accountName(request.getAccountName().trim())
+                .accountEmail(request.getAccountEmail().trim())
+                .accountPassword(request.getAccountPassword().trim())
+                .accountRole(2) // Default role: Staff
+                .build();
+
+        SystemAccount savedAccount = accountRepository.save(newAccount);
+
+        // Generate token for the new user
+        UserDetails userDetails = userDetailsService.loadUserByUsername(savedAccount.getAccountEmail().trim());
+
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("accountId", savedAccount.getAccountId());
+        extraClaims.put("accountName", savedAccount.getAccountName() != null ? savedAccount.getAccountName().trim() : null);
+        extraClaims.put("role", savedAccount.getAccountRole());
+
+        String token = jwtUtil.generateToken(userDetails, extraClaims);
+
+        return LoginResponse.builder()
+                .token(token)
+                .accountId(savedAccount.getAccountId())
+                .accountName(savedAccount.getAccountName() != null ? savedAccount.getAccountName().trim() : null)
+                .accountEmail(savedAccount.getAccountEmail().trim())
+                .accountRole(savedAccount.getAccountRole())
                 .build();
     }
 }

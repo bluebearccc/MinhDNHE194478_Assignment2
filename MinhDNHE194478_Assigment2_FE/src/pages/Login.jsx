@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Form, Button, Card, Alert } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import api from '../api';
 
@@ -57,9 +57,15 @@ const Login = () => {
                 <Form.Label>Password</Form.Label>
                 <Form.Control type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
               </Form.Group>
-              <Button disabled={loading} className="w-100" type="submit">
+              <Button disabled={loading} className="w-100 mb-3" type="submit">
                 {loading ? 'Logging in...' : 'Log In'}
               </Button>
+              
+              <div className="text-center">
+                <p className="mb-0">
+                  Don't have an account? <Link to="/register">Sign Up</Link>
+                </p>
+              </div>
             </Form>
           </Card.Body>
         </Card>

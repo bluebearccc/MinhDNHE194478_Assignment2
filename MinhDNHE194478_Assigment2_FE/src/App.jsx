@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AppNavbar from './components/AppNavbar';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import PublicNews from './pages/PublicNews';
 import { jwtDecode } from 'jwt-decode';
 
@@ -39,6 +40,7 @@ function App() {
         <Routes>
           <Route path="/" element={<PublicNews />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route 
             path="/admin/*" 
             element={
